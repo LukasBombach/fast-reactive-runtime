@@ -1,4 +1,4 @@
-import { createReactiveRuntime } from "..";
+import { createReactiveRuntime } from "../runtime";
 
 const { value, react } = createReactiveRuntime();
 
