@@ -1,4 +1,4 @@
-type Reaction = () => void;
+type Reaction<V = void> = (current: V) => V;
 
 export function createReactiveRuntime() {
   const queue = new Set<Reaction>();
@@ -31,8 +31,9 @@ export function createReactiveRuntime() {
   function react(reaction: Reaction) {
     const previous = current;
     current = reaction;
-    reaction();
+    value = reaction(value);
     current = previous;
+    return value;
   }
 
   return {
