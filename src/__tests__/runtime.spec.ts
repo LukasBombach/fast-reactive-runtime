@@ -1,6 +1,6 @@
 import { createReactiveRuntime } from "../runtime";
 
-const { value, react } = createReactiveRuntime();
+const { value, effect: react } = createReactiveRuntime();
 
 describe("value", () => {
   test("it should return a getter and setter", () => {
@@ -12,49 +12,49 @@ describe("value", () => {
     expect(get()).toBe(2);
   });
 
-  test("it should trigger a reaction when the value is set", () => {
+  test("it should trigger a effect when the value is set", () => {
     const [get, set] = value(0);
-    const reaction = jest.fn(() => get());
-    react(reaction);
+    const effect = jest.fn(() => get());
+    react(effect);
     set(1);
-    expect(reaction).toHaveBeenCalledTimes(2);
+    expect(effect).toHaveBeenCalledTimes(2);
   });
 
-  test("it should trigger an a reaction when passing values by reference", () => {
+  test("it should trigger an a effect when passing values by reference", () => {
     const [get, set] = value({ a: 0 });
-    const reaction = jest.fn(() => get());
-    react(reaction);
+    const effect = jest.fn(() => get());
+    react(effect);
     set({ a: 1 });
-    expect(reaction).toHaveBeenCalledTimes(2);
+    expect(effect).toHaveBeenCalledTimes(2);
   });
 
-  test("a reaction can be triggered multiple times", () => {
+  test("a effect can be triggered multiple times", () => {
     const [get, set] = value(0);
-    const reaction = jest.fn(() => get());
-    react(reaction);
+    const effect = jest.fn(() => get());
+    react(effect);
     set(1);
     set(2);
-    expect(reaction).toHaveBeenCalledTimes(3);
+    expect(effect).toHaveBeenCalledTimes(3);
   });
 
-  test("a value can trigger multiple reactions", () => {
+  test("a value can trigger multiple effects", () => {
     const [get, set] = value(0);
-    const reaction1 = jest.fn(() => get());
-    const reaction2 = jest.fn(() => get());
-    react(reaction1);
-    react(reaction2);
+    const effect1 = jest.fn(() => get());
+    const effect2 = jest.fn(() => get());
+    react(effect1);
+    react(effect2);
     set(1);
-    expect(reaction1).toHaveBeenCalledTimes(2);
-    expect(reaction2).toHaveBeenCalledTimes(2);
+    expect(effect1).toHaveBeenCalledTimes(2);
+    expect(effect2).toHaveBeenCalledTimes(2);
   });
 
-  test("a reaction can be triggered by multiple values", () => {
+  test("a effect can be triggered by multiple values", () => {
     const [get1, set1] = value(0);
     const [get2, set2] = value(0);
-    const reaction = jest.fn(() => [get1(), get2()]);
-    react(reaction);
+    const effect = jest.fn(() => [get1(), get2()]);
+    react(effect);
     set1(1);
     set2(1);
-    expect(reaction).toHaveBeenCalledTimes(3);
+    expect(effect).toHaveBeenCalledTimes(3);
   });
 });

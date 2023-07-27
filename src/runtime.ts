@@ -1,11 +1,11 @@
-type Reaction = () => void;
+type Effect = () => void;
 
 export function createReactiveRuntime() {
-  const queue = new Set<Reaction>();
-  let current: Reaction = () => {};
+  const queue = new Set<Effect>();
+  let current: Effect = () => {};
 
   function value<V>(value: V): [get: () => V, set: (value: V) => void] {
-    const reactions = new Set<Reaction>();
+    const reactions = new Set<Effect>();
 
     const get = () => {
       reactions.add(current);
@@ -28,15 +28,15 @@ export function createReactiveRuntime() {
     return [get, set];
   }
 
-  function react(reaction: Reaction) {
+  function effect(fn: Effect) {
     const previous = current;
-    current = reaction;
-    reaction();
+    current = fn;
+    fn();
     current = previous;
   }
 
   return {
     value,
-    react,
+    effect,
   };
 }
