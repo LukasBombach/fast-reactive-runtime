@@ -1,8 +1,8 @@
-type Reaction<V = void> = (current: V | undefined) => V;
+type Reaction = () => void;
 
 export function createReactiveRuntime() {
   const queue = new Set<Reaction>();
-  let current: Reaction<any> = () => {};
+  let current: Reaction = () => {};
 
   function value<V>(value: V): [get: () => V, set: (value: V) => void] {
     const reactions = new Set<Reaction>();
@@ -28,14 +28,11 @@ export function createReactiveRuntime() {
     return [get, set];
   }
 
-  function react<V = void>(reaction: Reaction<V>): () => V {
-    const [get, set] = value(reaction(undefined));
+  function react(reaction: Reaction) {
     const previous = current;
     current = reaction;
-    // todo prevent infinite loops
-    set(reaction(get()));
+    reaction();
     current = previous;
-    return get;
   }
 
   return {
