@@ -1,6 +1,6 @@
 import { createReactiveRuntime } from "../runtime";
 
-const { value, effect: react } = createReactiveRuntime();
+const { value, effect: react, computed } = createReactiveRuntime();
 
 describe("value", () => {
   test("it should return a getter and setter", () => {
@@ -56,5 +56,13 @@ describe("value", () => {
     set1(1);
     set2(1);
     expect(effect).toHaveBeenCalledTimes(3);
+  });
+
+  test("computed should return a getter to its return value", () => {
+    const [get, set] = value(0);
+    const computedValue = computed(() => get() + 1);
+    expect(computedValue()).toBe(1);
+    set(1);
+    expect(computedValue()).toBe(2);
   });
 });

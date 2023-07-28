@@ -1,8 +1,9 @@
 type Effect = () => void;
+type Computed<T> = (current: T | undefined) => T;
 
 export function createReactiveRuntime() {
   const queue = new Set<Effect>();
-  let current: Effect = () => {};
+  let current: (...args: any[]) => any = () => {};
 
   function value<V>(value: V): [get: () => V, set: (value: V) => void] {
     const reactions = new Set<Effect>();
@@ -35,8 +36,40 @@ export function createReactiveRuntime() {
     current = previous;
   }
 
+  function computed<T = undefined>(fn: Computed<T>): () => T {
+    const [get, set] = value<T>(fn(undefined));
+
+    //effect(() => set(fn(get())));
+
+    const previous = current;
+    current = fn;
+    fn(undefined);
+    current = previous;
+
+    return get;
+
+    /* let value: T | undefined = undefined;
+    let firstRun = true;
+
+    const get = () => {
+      if (firstRun) {
+        value = fn(undefined);
+        firstRun = false;
+      }
+
+      return value!;
+    };
+
+    const set = (newValue: T) => {
+      value = newValue;
+    };
+
+    return get; */
+  }
+
   return {
     value,
     effect,
+    computed,
   };
 }
