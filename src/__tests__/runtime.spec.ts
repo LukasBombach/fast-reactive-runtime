@@ -64,5 +64,29 @@ describe("value", () => {
     expect(computedValue()).toBe(1);
     set(1);
     expect(computedValue()).toBe(2);
+    set(2);
+    expect(computedValue()).toBe(3);
+  });
+
+  test("computed be able to deal with multiple values", () => {
+    const [get1, set1] = value("A");
+    const [get2, set2] = value("A");
+    const computedValue = computed(() => get1() + get2());
+    expect(computedValue()).toBe("AA");
+    set1("B");
+    expect(computedValue()).toBe("BA");
+    set2("B");
+    expect(computedValue()).toBe("BB");
+  });
+
+  test("computeds can be nested", () => {
+    const [get, set] = value("A");
+    const computedB = computed(() => get() + "B");
+    const computedC = computed(() => computedB() + "C");
+    expect(computedB()).toBe("AB");
+    expect(computedC()).toBe("ABC");
+    set("X");
+    expect(computedB()).toBe("XB");
+    expect(computedC()).toBe("XBC");
   });
 });
