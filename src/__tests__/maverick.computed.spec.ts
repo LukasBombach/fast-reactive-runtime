@@ -115,7 +115,7 @@ xtest("it should only re-compute whats needed", () => {
   expect($e()).toBe(40);
 });
 
-xtest("it should discover new dependencies", () => {
+test("it should discover new dependencies", () => {
   const [$a, $set_a] = value(1);
   const [$b, $set_b] = value(0);
 
