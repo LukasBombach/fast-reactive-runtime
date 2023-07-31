@@ -11,11 +11,14 @@ export function createReactiveRuntime() {
 
   function value<V>(value: V): [get: () => V, set: (value: V) => void] {
     const reactions = new Set<Effect>();
+    let isSetting = false;
 
     // Every time we call get, we add the current effect to the reactions
     // This makes a reaction that includes a getter a dependency of that value
     const get = () => {
-      reactions.add(current);
+      console.log("isSetting", isSetting);
+
+      if (!isSetting) reactions.add(current);
       return value;
     };
 
@@ -29,6 +32,8 @@ export function createReactiveRuntime() {
     const set = (newValue: V) => {
       value = newValue;
 
+      isSetting = true;
+
       const values = queue.values();
       reactions.forEach(r => queue.add(r));
       let item = values.next();
@@ -37,6 +42,8 @@ export function createReactiveRuntime() {
         item.value();
         item = values.next();
       }
+
+      isSetting = false;
     };
 
     return [get, set];
@@ -59,12 +66,12 @@ export function createReactiveRuntime() {
     // so that when the value is changed, the effect is executed
     // but we must make sure that we do not a create a circular dependency
     // so we use a flag to check if the effect is already being executed
-    let isComputing = false;
+    // let isComputing = false;
     effect(() => {
-      if (isComputing) return;
-      isComputing = true;
+      // if (isComputing) return;
+      // isComputing = true;
       set(fn(get()));
-      isComputing = false;
+      // isComputing = false;
     });
 
     return get;

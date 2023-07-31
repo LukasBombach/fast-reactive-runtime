@@ -3,6 +3,13 @@ import { createReactiveRuntime } from "../runtime";
 const { value, effect: react, computed } = createReactiveRuntime();
 
 describe("value", () => {
+  test.only("it should not run into an infinite loop when getting a value inside its settter", () => {
+    const [get, set] = value(0);
+    set(get() + 1);
+    // expect(get()).toHaveBeenCalledTimes(1);
+    expect(get()).toBe(1);
+  });
+
   test("it should return a getter and setter", () => {
     const [get, set] = value(0);
     expect(get()).toBe(0);
