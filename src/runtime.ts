@@ -18,7 +18,7 @@ export function createReactiveRuntime() {
     // Every time we call get, we add the current effect to the reactions
     // This makes a reaction that includes a getter a dependency of that value
     const get = () => {
-      console.log(chalk.green("getting"), chalk.green(options?.name), "current is", current.toString());
+      // console.log(chalk.green("getting"), chalk.green(options?.name), "current is", current.toString());
 
       if (isSetting) return value;
       reactions.add(current);
@@ -39,21 +39,21 @@ export function createReactiveRuntime() {
 
       const values = queue.values();
       reactions.forEach(r => queue.add(r));
-      console.log(
-        chalk.yellow("setting"),
-        chalk.yellow(options?.name),
-        "reactions:",
-        [...reactions].map(r => r.toString())
-      );
+      // console.log(
+      //   chalk.yellow("setting"),
+      //   chalk.yellow(options?.name),
+      //   "reactions:",
+      //   [...reactions].map(r => r.toString())
+      // );
       let item = values.next();
       while (!item.done) {
         queue.delete(item.value);
 
         const previous = current;
-        console.log(chalk.blue("setting current"), item.value.toString());
+        // console.log(chalk.blue("setting current"), item.value.toString());
         current = item.value;
         item.value();
-        console.log(chalk.red("restoring current"), previous);
+        // console.log(chalk.red("restoring current"), previous);
         current = previous;
 
         item = values.next();
@@ -70,10 +70,10 @@ export function createReactiveRuntime() {
     // so that when we call get on a value, we can add the current effect
     // to the reactions of that value
     const previous = current;
-    console.log(chalk.blue("setting current"), fn.toString());
+    // console.log(chalk.blue("setting current"), fn.toString());
     current = fn;
     fn();
-    console.log(chalk.red("restoring current"), previous);
+    // console.log(chalk.red("restoring current"), previous);
     current = previous;
   }
 
