@@ -5,7 +5,7 @@ const { computed, value } = createReactiveRuntime();
 test("it should store and return value on read", () => {
   const [$a] = value(10);
   const [$b] = value(10);
-  const [$c] = computed(() => $a() + $b());
+  const $c = computed(() => $a() + $b());
 
   expect($c()).toBe(20);
 
@@ -16,7 +16,7 @@ test("it should store and return value on read", () => {
 test("it should update when dependency is updated", () => {
   const [$a, $set_a] = value(10);
   const [$b, $set_b] = value(10);
-  const [$c] = computed(() => $a() + $b());
+  const $c = computed(() => $a() + $b());
 
   $set_a(20);
   expect($c()).toBe(30);
@@ -28,8 +28,8 @@ test("it should update when dependency is updated", () => {
 test("it should update when deep dependency is updated", () => {
   const [$a, $set_a] = value(10);
   const [$b] = value(10);
-  const [$c] = computed(() => $a() + $b());
-  const [$d] = computed(() => $c());
+  const $c = computed(() => $a() + $b());
+  const $d = computed(() => $c());
 
   $set_a(20);
   expect($d()).toBe(30);
@@ -38,9 +38,9 @@ test("it should update when deep dependency is updated", () => {
 test("it should update when deep computed dependency is updated", () => {
   const [$a, $set_a] = value(10);
   const [$b, $set_b] = value(10);
-  const [$c] = computed(() => $a() + $b());
-  const [$d] = computed(() => $c());
-  const [$e] = computed(() => $d());
+  const $c = computed(() => $a() + $b());
+  const $d = computed(() => $c());
+  const $e = computed(() => $d());
 
   $set_a(20);
   expect($e()).toBe(30);
@@ -50,9 +50,9 @@ test("it should discover new dependencies", () => {
   console.log("--");
 
   const [$a, $set_a] = value(1, { name: "a" });
-  const [$b, $set_b, $reactions_b] = value(0, { name: "b" });
+  const [$b, $set_b] = value(0, { name: "b" });
 
-  const [$c] = computed(
+  const $c = computed(
     () => {
       if ($a()) {
         return $a();
