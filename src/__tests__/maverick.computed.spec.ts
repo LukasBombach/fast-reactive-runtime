@@ -90,7 +90,7 @@ xtest("it should only re-compute whats needed", () => {
     computeD(b);
     return b;
   });
-  const $e = computed(() => $c() + $d());
+  const $e = computed(() => ($c() || 0) + ($d() || 0));
 
   expect(computeC).not.toHaveBeenCalled();
   expect(computeD).not.toHaveBeenCalled();
@@ -116,16 +116,19 @@ xtest("it should only re-compute whats needed", () => {
 });
 
 test("it should discover new dependencies", () => {
-  const [$a, $set_a] = value(1);
-  const [$b, $set_b] = value(0);
+  const [$a, $set_a] = value(1, { name: "a" });
+  const [$b, $set_b] = value(0, { name: "b" });
 
-  const $c = computed(() => {
-    if ($a()) {
-      return $a();
-    } else {
-      return $b();
-    }
-  });
+  const $c = computed(
+    () => {
+      if ($a()) {
+        return $a();
+      } else {
+        return $b();
+      }
+    },
+    { name: "c" }
+  );
 
   expect($c()).toBe(1);
 
