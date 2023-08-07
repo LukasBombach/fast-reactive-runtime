@@ -46,7 +46,7 @@ test("it should update when deep computed dependency is updated", () => {
   expect($e()).toBe(30);
 });
 
-test.only("it should discover new dependencies", () => {
+test("it should discover new dependencies", () => {
   console.log("--");
 
   const [$a, $set_a] = value(1, { name: "a" });
