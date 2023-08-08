@@ -46,7 +46,7 @@ test("it should update when deep computed dependency is updated", () => {
   expect($e()).toBe(30);
 });
 
-xtest("it should only re-compute when needed", () => {
+test("it should only re-compute when needed", () => {
   const compute = jest.fn();
 
   const [$a, $set_a] = value(10);

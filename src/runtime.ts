@@ -1,5 +1,7 @@
 import chalk from "chalk";
 
+type Get<V> = () => V;
+type Set<V> = (value: V) => void;
 type Effect = () => void;
 type Computed<T> = (current: T | undefined) => T;
 
@@ -11,8 +13,8 @@ export function createReactiveRuntime() {
   // This is the current effect that is being executed
   let current: (...args: any[]) => any = noop;
 
-  function value<V>(value: V, options?: { name: string }): [get: () => V, set: (value: V) => void] {
-    const reactions = new Set<Effect>();
+  function value<V>(value: V, options?: { name: string }): [get: Get<V>, set: Set<V>] {
+    const effects = new Set<Effect>();
     let isSetting = false;
 
     // Every time we call get, we add the current effect to the reactions
@@ -21,7 +23,7 @@ export function createReactiveRuntime() {
       // console.log(chalk.green("getting"), chalk.green(options?.name), "current is", current.toString());
 
       if (isSetting) return value;
-      reactions.add(current);
+      effects.add(current);
       return value;
     };
 
@@ -38,7 +40,7 @@ export function createReactiveRuntime() {
       isSetting = true;
 
       const values = queue.values();
-      reactions.forEach(r => queue.add(r));
+      effects.forEach(r => queue.add(r));
       // console.log(
       //   chalk.yellow("setting"),
       //   chalk.yellow(options?.name),
